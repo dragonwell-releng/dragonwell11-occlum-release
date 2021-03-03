@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #wget alpine jdk11 as boot jdk for compile
-BOOT_JDK=https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-jdk11.0.10-linux_musl_x64.tar.gz
+#BOOT_JDK=https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-jdk11.0.10-linux_musl_x64.tar.gz
+BOOT_JDK=https://dragonwell.oss-cn-shanghai.aliyuncs.com/11/linux/x64/11.0.8.3-enclave/zulu11.45.27-ca-jdk11.0.10-linux_musl_x64.tar.gz
 mkdir -p boot_jdk && cd $_
 wget -q -c $BOOT_JDK -O - | tar -xz --strip-components 1
 export JAVA_HOME=`pwd`
