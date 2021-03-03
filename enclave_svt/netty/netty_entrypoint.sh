@@ -24,30 +24,30 @@ esac
 mkdir -p ${JDK_PATH}
 cp -r ./${JDK_IMAGES_DIR}/. ${JDK_PATH}
 
-echo "download and build web app"
-cd ${WORK_SPACE}/enclave_svt/springboot
-./download_and_build_web_app.sh
+echo "download and build netty app"
+cd ${WORK_SPACE}/enclave_svt/netty
+./download_and_build_netty_app.sh
 
 echo "run java on occlum"
-cd ${WORK_SPACE}/enclave_svt/springboot
-./run_java_on_occlum.sh &
+cd ${WORK_SPACE}/enclave_svt/netty
+./run_netty_on_occlum.sh &
 
-echo "waiting for springboot start up for five minitutes......"
-sleep 300
+echo "waiting for netty start up for three minitutes......"
+sleep 180
 
 RESULT=""
-Count=50
+Count=20
 while [[ $RESULT == "" && $Count -gt 1 ]]; do
-    RESULT=$(curl http://localhost:8080)
+    RESULT=$(curl http://127.0.0.1:8080/)
     Count=`expr $Count - 1`
     sleep 5
     echo "wait more five seconds"
 done
 
 if [[ $Count -gt 1 ]];then
-    echo 'SpringBoot svt test succeed'
+    echo 'netty svt test succeed'
     echo $RESULT
 else
-    echo 'SpringBoot svt test failed'
+    echo 'netty svt test failed'
     exit 1
 fi

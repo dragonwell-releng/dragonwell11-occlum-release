@@ -10,10 +10,12 @@ pipeline {
                  steps {
                      echo 'Download dragonwell resource code and build it'
                      sh "printenv"
-                     sh "mkdir -p ${WORKSPACE}/workspace/${BUILD_TAG} \
-                         && rm -rf ${WORKSPACE}/workspace/${BUILD_TAG}/*"
+                     sh "mkdir -p ${WORKSPACE}/workspace/${BUILD_TAG} && rm -rf ${WORKSPACE}/workspace/${BUILD_TAG}/*"
                      sh "wget -c ${dragonwell_repo_address} -O - | tar -xz -C ${WORKSPACE}/workspace/${BUILD_TAG} --strip-components 1"
-                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./make.sh ${build_mode}"
+                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && \
+                         mkdir tmp && git clone git@github.com:dragonwell-releng/dragonwell11-occlum-release.git ./tmp && \
+                         mv ./tmp/* ./ && rm -rf tmp"
+                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./make_alpine.sh ${build_mode}"
                  }
                  }
                  stage('SpringBoot based on Occlum') {
@@ -30,11 +32,11 @@ pipeline {
                          && ./enclave_svt/font/font_startup.sh"
                  }
                  }
-                 stage('Java svm support based on Occlum') {
+                 stage('Java netty support based on Occlum') {
                  steps {
-                     echo 'wget svm app and run it based on Occlum'
+                     echo 'create netty app and run it based on Occlum'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
-                         && ./enclave_svt/svm/svm_startup.sh"
+                         && ./enclave_svt/netty/netty_startup.sh"
                  }
                  }
          }
