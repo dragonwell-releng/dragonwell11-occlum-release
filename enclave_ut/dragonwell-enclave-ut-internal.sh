@@ -15,6 +15,8 @@ init_instance() {
     user_space_size=${user_space_size}"MB"
     new_json="$(jq --arg default_mmap_size "$default_mmap_size" \
                  --arg user_space_size "$user_space_size" \
+                 --arg occlum_kernel_heap_size "$occlum_kernel_heap_size" \
+                 --arg occlum_max_thread_num "$occlum_max_thread_num" \
                '.resource_limits.user_space_size = $user_space_size |
                 .resource_limits.kernel_space_heap_size = $occlum_kernel_heap_size |
                 .resource_limits.max_num_of_threads = $occlum_max_thread_num |
