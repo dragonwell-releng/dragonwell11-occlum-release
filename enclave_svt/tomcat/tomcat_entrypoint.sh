@@ -33,7 +33,7 @@ cd ${WORK_SPACE}/enclave_svt/tomcat
 ./run_tomcat_on_occlum.sh &
 
 echo "waiting for tomcat start up for three minitutes......"
-sleep 180
+sleep 90
 
 RESULT=""
 Count=20

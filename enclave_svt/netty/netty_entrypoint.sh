@@ -33,7 +33,7 @@ cd ${WORK_SPACE}/enclave_svt/netty
 ./run_netty_on_occlum.sh &
 
 echo "waiting for netty start up for three minitutes......"
-sleep 180
+sleep 90
 
 RESULT=""
 Count=20

@@ -8,14 +8,16 @@ init_instance() {
     cd occlum_instance
     occlum init
     default_mmap_size=${OCCLUM_HEAP_CONFIGURE}
-    user_space_size=`expr ${default_mmap_size} + 1000`
+    occlum_kernel_heap_size=${OCCLUM_KERNEL_HEAP_SIZE}"MB"
+    occlum_max_thread_num=${OCCLUM_MAX_THREAD_NUM}
+    user_space_size=`expr ${default_mmap_size} + 400`
     default_mmap_size=${default_mmap_size}"MB"
     user_space_size=${user_space_size}"MB"
     new_json="$(jq --arg default_mmap_size "$default_mmap_size" \
                  --arg user_space_size "$user_space_size" \
                '.resource_limits.user_space_size = $user_space_size |
-                .resource_limits.kernel_space_heap_size="64MB" |
-                .resource_limits.max_num_of_threads = 100 |
+                .resource_limits.kernel_space_heap_size = $occlum_kernel_heap_size |
+                .resource_limits.max_num_of_threads = $occlum_max_thread_num |
                 .process.default_heap_size = "150MB" |
                 .process.default_mmap_size = $default_mmap_size |
                 .entry_points = [ "/usr/lib/jvm/jdk/jre/bin" ] |
@@ -30,6 +32,9 @@ build_dragonwell_ut() {
     # Copy JVM and JAR file into Occlum instance and build
     mkdir -p image/usr/lib/jvm
     cp -r ./occlum_ut/usr/lib/jvm/jdk image/usr/lib/jvm
+
+    # fix new work issue
+    echo '127.0.0.1   occlum-node' >> image/etc/hosts
 
     mkdir -p image/usr/jvm/
     cp -r ./occlum_ut/usr/jvm/jtreg image/usr/jvm && cp -r ./occlum_ut/usr/jvm/test image/usr/jvm

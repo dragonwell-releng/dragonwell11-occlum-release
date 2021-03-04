@@ -33,7 +33,7 @@ cd ${WORK_SPACE}/enclave_svt/springboot
 ./run_java_on_occlum.sh &
 
 echo "waiting for springboot start up for five minitutes......"
-sleep 300
+sleep 150
 
 RESULT=""
 Count=50
