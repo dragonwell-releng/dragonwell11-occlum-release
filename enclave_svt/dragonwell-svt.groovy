@@ -6,7 +6,7 @@ pipeline {
              }
          }
          stages {
-                 stage('Dragonwell Enclave Build') {
+                 stage('Build') {
                  steps {
                      echo 'Download dragonwell resource code and build it'
                      sh "printenv"
@@ -18,25 +18,32 @@ pipeline {
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./make_alpine.sh ${build_mode}"
                  }
                  }
-                 stage('SpringBoot based on Occlum') {
+                 stage('SpringBoot') {
                  steps {
                      echo 'Build SpringBoot and run it based on Occlum'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
                          && ./enclave_svt/springboot/springboot_startup.sh"
                  }
                  }
-                 stage('Java font support based on Occlum') {
+                 stage('Font Support') {
                  steps {
                      echo 'create font app and run it based on Occlum'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
                          && ./enclave_svt/font/font_startup.sh"
                  }
                  }
-                 stage('Java netty support based on Occlum') {
+                 stage('Netty') {
                  steps {
                      echo 'create netty app and run it based on Occlum'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
                          && ./enclave_svt/netty/netty_startup.sh"
+                 }
+                 }
+                 stage('Tomcat') {
+                 steps {
+                     echo 'create tomcat app and run it based on Occlum'
+                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
+                         && ./enclave_svt/tomcat/tomcat_startup.sh"
                  }
                  }
          }

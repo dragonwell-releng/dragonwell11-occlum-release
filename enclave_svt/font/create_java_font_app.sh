@@ -84,7 +84,7 @@ dependencies {
 
 cd $demopath
 
-rm -rf SimSun.ttf && wget http://d.xiazaiziti.com/en_fonts/fonts/s/SimSun.ttf && mv SimSun.ttf simsun.ttf
+rm -rf simsun.ttf && wget -q https://dragonwell.oss-cn-shanghai.aliyuncs.com/11/linux/x64/11.0.8.3-enclave/simsun.ttf
 
 docker images | grep occlum-font &> /dev/null
 if [ $? -ne 0 ]

@@ -6,7 +6,7 @@ pipeline {
              }
          }
          stages {
-                 stage('Dragonwell Enclave Build') {
+                 stage('Build') {
                  steps {
                      echo 'Download dragonwell resource code and build it'
                      sh "printenv"
@@ -18,19 +18,19 @@ pipeline {
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./make_alpine.sh ${build_mode}"
                  }
                  }
-                 stage('Dragonwell UT') {
+                 stage('Unit Test') {
                  steps {
                      echo 'Make dragonwell jtreg ut for enclave'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./enclave_ut/dragonwell-ut.sh ${build_mode}"
                  }
                  }
-                 stage('Enclave UT') {
+                 stage('Unit Test On Occlum') {
                  steps {
                      echo 'Create Occlum enviroment and make ut in Occlum docker'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./enclave_ut/dragonwell-enclave-ut.sh"
                  }
                  }
-                 stage('Enclave UT Report') {
+                 stage('Unit Test Report') {
                  steps {
                      echo 'Look up Enclave UT Report by HTML publisher'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG}/enclave_ut/ \

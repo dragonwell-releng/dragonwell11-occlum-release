@@ -31,24 +31,24 @@ init_instance() {
     echo "${new_json}" > Occlum.json
 }
 
-build_netty() {
+build_tomcat() {
     # Copy JVM and JAR file into Occlum instance and build
     mkdir -p image/usr/lib/jvm
     cp -r /usr/lib/jvm/enclave_svt image/usr/lib/jvm
     cp /usr/local/occlum/x86_64-linux-musl/lib/libz.so.1 image/lib
-    mkdir -p image/usr/lib/netty
-    cp ../${jar_path} image/usr/lib/netty/
+    mkdir -p image/usr/lib/tomcat
+    cp ../${jar_path} image/usr/lib/tomcat/
     occlum build
 }
 
-run_netty() {
-    jar_path=./netty-demo/target/hello-netty-1.0.jar
+run_tomcat() {
+    jar_path=./tomcat-demo/target/employees-app-1.0-SNAPSHOT-jar-with-dependencies.jar
     check_file_exist ${jar_path}
     jar_file=`basename "${jar_path}"`
     init_instance
-    build_netty
-    echo -e "${BLUE}occlum run JVM netty app${NC}"
-    occlum run /usr/lib/jvm/enclave_svt/jre/bin/java -Xmx512m -XX:-UseCompressedOops -XX:MaxMetaspaceSize=64m -Dos.name=Linux -jar /usr/lib/netty/${jar_file}
+    build_tomcat
+    echo -e "${BLUE}occlum run JVM tomcat app${NC}"
+    occlum run /usr/lib/jvm/enclave_svt/jre/bin/java -Xmx512m -XX:-UseCompressedOops -XX:MaxMetaspaceSize=64m -Dos.name=Linux -jar /usr/lib/tomcat/${jar_file}
 }
 
-run_netty
+run_tomcat

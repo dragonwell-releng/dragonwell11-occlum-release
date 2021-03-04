@@ -5,4 +5,4 @@ BUILD_MODE=${build_mode}
 
 docker run -i --device /dev/isgx --network host --rm -v `pwd`:`pwd` -w `pwd` \
            -e BUILD_MODE=${BUILD_MODE} \
-           ${OCCLUM_IMAGE} `pwd`/enclave_svt/netty/netty_entrypoint.sh
+           ${OCCLUM_IMAGE} `pwd`/enclave_svt/tomcat/tomcat_entrypoint.sh

@@ -24,30 +24,30 @@ esac
 mkdir -p ${JDK_PATH}
 cp -r ./${JDK_IMAGES_DIR}/. ${JDK_PATH}
 
-echo "download and build netty app"
-cd ${WORK_SPACE}/enclave_svt/netty
-./download_and_build_netty_app.sh
+echo "create and build tomcat app"
+cd ${WORK_SPACE}/enclave_svt/tomcat
+./create_and_build_tomcat_app.sh
 
-echo "run java on occlum"
-cd ${WORK_SPACE}/enclave_svt/netty
-./run_netty_on_occlum.sh &
+echo "run tomcat on occlum"
+cd ${WORK_SPACE}/enclave_svt/tomcat
+./run_tomcat_on_occlum.sh &
 
-echo "waiting for netty start up for three minitutes......"
+echo "waiting for tomcat start up for three minitutes......"
 sleep 180
 
 RESULT=""
 Count=20
 while [[ $RESULT == "" && $Count -gt 1 ]]; do
-    RESULT=$(curl http://127.0.0.1:8080/)
+    RESULT=$(curl -v http://127.0.0.1:8080/employee)
     Count=`expr $Count - 1`
     sleep 5
     echo "wait more five seconds"
 done
 
 if [[ $Count -gt 1 ]];then
-    echo 'netty svt test succeed'
+    echo 'tomcat svt test succeed'
     echo $RESULT
 else
-    echo 'netty svt test failed'
+    echo 'tomcat svt test failed'
     exit 1
 fi
