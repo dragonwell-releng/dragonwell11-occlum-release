@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-BLUE='\033[1;34m'
-NC='\033[0m'
-
 JDK_PATH="/usr/lib/jvm/enclave_svt/jre"
 
 check_file_exist() {
@@ -47,7 +44,7 @@ run_web() {
     jar_file=`basename "${jar_path}"`
     init_instance
     build_web
-    echo -e "${BLUE}occlum run JVM web app${NC}"
+    echo -e "occlum run JVM web app"
     occlum run /usr/lib/jvm/enclave_svt/jre/bin/java -Xmx512m -XX:-UseCompressedOops -XX:MaxMetaspaceSize=64m -Dos.name=Linux -jar /usr/lib/spring/${jar_file}
 }
 

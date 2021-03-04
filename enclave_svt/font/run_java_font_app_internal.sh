@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-BLUE='\033[1;34m'
-NC='\033[0m'
-
 JDK_PATH="/usr/lib/jvm/enclave_svt/jre"
 BUILD_MODE=${BUILD_MODE}
 JDK_IMAGES_DIR=""
@@ -67,7 +64,7 @@ run_poi_font() {
     cp -r ./font-lib /opt/occlum
     init_instance
     build_poi_font
-    echo -e "${BLUE}occlum run JVM poi font app${NC}"
+    echo -e "occlum run JVM poi font app"
     occlum run /usr/lib/jvm/enclave_svt/jre/bin/java -Xmx512m -XX:-UseCompressedOops -XX:MaxMetaspaceSize=64m -Dos.name=Linux -jar /usr/app/SXSSFWriteDemoTwo.jar
 }
 

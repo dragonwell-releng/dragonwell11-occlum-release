@@ -4,7 +4,8 @@ set -e
 JDK_PATH="/usr/lib/jvm/enclave_svt/jre"
 
 # 1. Install mvn
-apt -y install maven
+apt-get update
+apt-get -y install maven
 
 # 2. Download the demo
 rm -rf netty-demo && mkdir netty-demo && cd $_

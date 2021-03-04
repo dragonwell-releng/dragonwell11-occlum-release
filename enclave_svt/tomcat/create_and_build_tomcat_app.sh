@@ -5,7 +5,8 @@ set -e
 JDK_PATH="/usr/lib/jvm/enclave_svt/jre"
 
 # 1. Install mvn
-apt -y install maven
+apt-get update
+apt-get -y install maven
 
 # 2. Create the demo
 rm -rf tomcat-demo && mkdir tomcat-demo && cd $_
