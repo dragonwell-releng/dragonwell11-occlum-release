@@ -11,7 +11,7 @@ apt-get -y install maven
 # 2. Create the demo
 rm -rf tomcat-demo && mkdir tomcat-demo && cd $_
 
-echo "
+echo '
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -105,20 +105,19 @@ echo "
             </plugin>
         </plugins>
     </build>
-</project>
-" > pom.xml
+</project>' > pom.xml
 
 mkdir -p src/main/webapp
-echo "
+echo '
 <html>
 <body>
 <h2>Hello World!</h2>
 </body>
 </html>
-" > src/main/webapp/index.html
+' > src/main/webapp/index.html
 
 mkdir -p src/main/java/com/example/employees
-echo "
+echo '
 package com.example.employees;
 
 import org.slf4j.Logger;
@@ -156,10 +155,9 @@ public class EmployeeServlet extends HttpServlet {
     public void destroy() {
         LOGGER.info("Destroying {}", EmployeeServlet.class);
     }
-}
-" > src/main/java/com/example/employees/EmployeeServlet.java
+}' > src/main/java/com/example/employees/EmployeeServlet.java
 
-echo "
+echo '
 package com.example.employees;
 
 import org.apache.catalina.*;
@@ -292,11 +290,10 @@ public class Main {
         return resource.getFile();
     }
 
-}
-" > src/main/java/com/example/employees/Main.java
+}' > src/main/java/com/example/employees/Main.java
 
 mkdir -p src/main/resources
-echo "
+echo '
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
@@ -305,8 +302,7 @@ echo "
     <root level="debug">
         <appender-ref ref="STDOUT" />
     </root>
-</configuration>
-" > src/main/resources/logback.xml
+</configuration>' > src/main/resources/logback.xml
 
 # 3. Build the Fat JAR file with Maven
 export LD_LIBRARY_PATH=/opt/occlum/toolchains/gcc/x86_64-linux-musl/lib
