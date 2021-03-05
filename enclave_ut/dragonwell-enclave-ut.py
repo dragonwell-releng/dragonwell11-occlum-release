@@ -30,7 +30,8 @@ class Status(Enum):
     CalledProcessError = 2
     ExceptionError = 3
     JtrParseFailed = 4
-    Normal = 5
+    Ignored = 5
+    Normal = 6
 
 occlum_server_name="occlum_exec_ser"
 occlum_client_name="occlum_exec_cli"
@@ -42,8 +43,8 @@ title_value = ["Unit Test Case", "Normal Result", "Enclave Result", "Details Inf
 JTwork_path = sys.argv[1]
 Image_JTwork_path = "./image" + JTwork_path
 
-# Parse CLASSPATH and java cmd content
-pattern1=r"CLASSPATH=(.*?)\nresult:\s(.*?)\."
+# Parse CLASSPATH, java cmd content and normal ut result
+pattern1=r"\nCLASSPATH=(.*?)\n(.*?)\/usr\/lib\/jvm\/jdk\/jre\/bin\/java (.*?[^\\])\n(.*?)(result: (Passed|Failed). Execution)"
 # Parse test path
 pattern2=r"\$root=(.*?)\/test\/"
 # Parse jtreg path
@@ -56,6 +57,13 @@ pattern5=r"-Dtest.jdk=(.*?)\s"
 pattern6=r"STATUS:(.*?)\."
 # Parse ut details and Error code, gs mode
 pattern7=r"^(.*)\nError: (.*?)$"
+# replave pattern1 with pattern8 and pattern9
+# Parse CLASSPATH
+pattern8=r"\nCLASSPATH=(.*?)[\n ]"
+# Parse java cmd
+pattern9=r"\/usr\/lib\/jvm\/jdk\/jre\/bin\/java (.*?)[^\\]\n"
+# Parse normal ut result
+pattern10=r"\nresult:\s(.*?)\. Execution"
 
 normal_ut_total_count = 0
 normal_ut_passed_count = 0
@@ -64,6 +72,19 @@ occlum_ut_passed_count = 0
 
 # limit ut max number for debug
 debug_limited_max_ut_count = 0xFFFFFFFF
+
+# black list record
+tf = open('blacklist.txt')
+black_list_record = tf.read()
+tf.close()
+
+def record_parse_failed_ut_func(context):
+    with open("parsefailedcases.txt", 'a') as f:
+        f.write(context)
+        f.write("\n")
+        f.write("************************************************************")
+        f.write("\n")
+
 
 def debug_limited_max_ut_func():
     global debug_limited_max_ut_count
@@ -187,38 +208,59 @@ def parse_jtr_and_run_ut(jtr_path):
     # get ut java file's full name
     java_ut_path = jtr_path[len(Image_JTwork_path)+len("/"):].replace(".jtr",".java")
 
+    # filter black list unit cases recorded in blacklist.txt
+    regex = re.compile(r"^%s(.*?)\n" %java_ut_path)
+    filter_black_list = regex.search(black_list_record)
+    if filter_black_list is not None:
+        print(jtr_path + " test case is in black list")
+        row = [java_ut_path, Status.Ignored.name, Status.Ignored.name, filter_black_list.group(1).strip()]
+        normal_ut_total_count = normal_ut_total_count + 1
+        dragonwell_enclave_ut_csv.write_csv(csv_path, row)
+        return
+
+    # parse [classpath]:[java cmd]:[test result]
     java_jtreg_run = re.finditer(pattern1, context, re.S)
     if java_jtreg_run is None:
         print(jtr_path + " could not parse ut <java run context>")
+        record_parse_failed_ut_func(context)
         row = [java_ut_path, Status.JtrParseFailed.name, Status.JtrParseFailed.name, ""]
         normal_ut_total_count = normal_ut_total_count + 1
         dragonwell_enclave_ut_csv.write_csv(csv_path, row)
         return
 
     for sub_java_jtreg_run in java_jtreg_run:
-        # first step, parse classpath and java parameters
-        tmp_java_jtreg_run = sub_java_jtreg_run.group(1)
-        # parse ut result run in normal environment
-        tmp_java_normal_ut_result = sub_java_jtreg_run.group(2)
-        tmp_java_jtreg_run = tmp_java_jtreg_run.replace("\\", "")
-        tmp_java_jtreg_run = tmp_java_jtreg_run.replace("\n", "")
-        tmp_java_jtreg_run_split = " ".join(re.split("\s+", tmp_java_jtreg_run, flags=re.UNICODE)).split()
-        tmp_java_jtreg_run_split[0], tmp_java_jtreg_run_split[1] = tmp_java_jtreg_run_split[1], tmp_java_jtreg_run_split[0]
+        # first step, parse classpath
+        tmp_classpath = sub_java_jtreg_run.group(1)
+        tmp_classpath = tmp_classpath.replace("\\", "")
+        tmp_classpath = tmp_classpath.replace("\n", "")
+        # second step, parse java cmd
+        tmp_javacmd = sub_java_jtreg_run.group(3)
+        tmp_javacmd = tmp_javacmd.replace("\\", "")
+        tmp_javacmd = tmp_javacmd.replace("\n", "")
+        # third step, parse ut result run in normal environment
+        tmp_normal_ut_result = sub_java_jtreg_run.group(6)
+
+        if tmp_javacmd == "" or not (tmp_normal_ut_result != "Passsed" and tmp_normal_ut_result != "Failed"):
+            record_parse_failed_ut_func(context)
+            row = [java_ut_path, Status.JtrParseFailed.name, Status.JtrParseFailed.name, ""]
+            normal_ut_total_count = normal_ut_total_count + 1
+            dragonwell_enclave_ut_csv.write_csv(csv_path, row)
+            return
 
         # if a parameter was set twice, the second will be applied
-        tmp_java_jtreg_run_split[1] = occlum_java_default_parameter + " -cp " + tmp_java_jtreg_run_split[1]
-        occlum_java_cmd = " ".join(tmp_java_jtreg_run_split)
+        occlum_java_cmd = "/usr/lib/jvm/jdk/jre/bin/java " + occlum_java_default_parameter + " -cp " \
+            + tmp_classpath + " " + tmp_javacmd
         args = "exec occlum exec " + occlum_java_cmd
         occlum_ut_result = occlum_exec_ut(args, ut_time_expire, timeout_retry_time)
 
         # write to .csv file
-        row = [java_ut_path, tmp_java_normal_ut_result, occlum_ut_result[0], occlum_ut_result[1]]
+        row = [java_ut_path, tmp_normal_ut_result, occlum_ut_result[0], occlum_ut_result[1]]
         print(java_ut_path + '\n' + occlum_ut_result[1] + '\n')
         dragonwell_enclave_ut_csv.write_csv(csv_path, row)
 
         occlum_ut_total_count = occlum_ut_total_count + 1
         normal_ut_total_count = normal_ut_total_count + 1
-        if tmp_java_normal_ut_result == "Passed":
+        if tmp_normal_ut_result == "Passed":
             normal_ut_passed_count = normal_ut_passed_count + 1
         if occlum_ut_result[0] == "Passed":
             occlum_ut_passed_count = occlum_ut_passed_count + 1

@@ -46,7 +46,7 @@ pipeline {
                          && ./enclave_svt/tomcat/tomcat_startup.sh"
                  }
                  }
-                 stage('SQlite') {
+                 stage('SQLite') {
                  steps {
                      echo 'create SQlite app and run it based on Occlum'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \

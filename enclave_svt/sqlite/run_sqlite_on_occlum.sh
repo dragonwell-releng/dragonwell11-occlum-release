@@ -45,6 +45,7 @@ run_sqlite() {
     check_file_exist ${class_path}
     check_file_exist ${jar_path}
     class_file=`basename "${class_path}"`
+    class_file=$(echo $class_file | cut -d . -f1)
     init_instance
     build_sqlite
     echo -e "occlum run JVM tomcat app"
