@@ -42,7 +42,7 @@ title_value = ["Unit Test Case", "Normal Result", "Enclave Result", "Details Inf
 JTwork_path = sys.argv[1]
 Image_JTwork_path = "./image" + JTwork_path
 
-# Parse CLASSPATH and java cmd contect
+# Parse CLASSPATH and java cmd content
 pattern1=r"CLASSPATH=(.*?)\nresult:\s(.*?)\."
 # Parse test path
 pattern2=r"\$root=(.*?)\/test\/"
@@ -205,7 +205,7 @@ def parse_jtr_and_run_ut(jtr_path):
         tmp_java_jtreg_run_split = " ".join(re.split("\s+", tmp_java_jtreg_run, flags=re.UNICODE)).split()
         tmp_java_jtreg_run_split[0], tmp_java_jtreg_run_split[1] = tmp_java_jtreg_run_split[1], tmp_java_jtreg_run_split[0]
 
-        # if a parameter was set twice, the second is applicable.
+        # if a parameter was set twice, the second will be applied
         tmp_java_jtreg_run_split[1] = occlum_java_default_parameter + " -cp " + tmp_java_jtreg_run_split[1]
         occlum_java_cmd = " ".join(tmp_java_jtreg_run_split)
         args = "exec occlum exec " + occlum_java_cmd
