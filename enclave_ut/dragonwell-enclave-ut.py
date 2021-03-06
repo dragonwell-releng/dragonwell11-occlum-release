@@ -74,12 +74,12 @@ occlum_ut_passed_count = 0
 debug_limited_max_ut_count = 0xFFFFFFFF
 
 # black list record
-tf = open('blacklist.txt')
+tf = open(sys.path[0] + "/" + "blacklist.txt")
 black_list_record = tf.read()
 tf.close()
 
 def record_parse_failed_ut_func(context):
-    with open("parsefailedcases.txt", 'a') as f:
+    with open(sys.path[0] + "/" + "parsefailedcases.txt", 'a') as f:
         f.write(context)
         f.write("\n")
         f.write("************************************************************")

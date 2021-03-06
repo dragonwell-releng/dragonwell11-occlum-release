@@ -41,7 +41,7 @@ build_dragonwell_ut() {
     mkdir -p image/usr/jvm/
     cp -r ./occlum_ut/usr/jvm/jtreg image/usr/jvm && cp -r ./occlum_ut/usr/jvm/test image/usr/jvm
     sed -i 's/$(SECURE_IMAGE): $(IMAGE) $(IMAGE_DIRS) $(IMAGE_FILES)/$(SECURE_IMAGE):/' /opt/occlum/build/bin/occlum_build.mk
-    occlum build -f
+    occlum build
 }
 
 run_dragonwell_ut() {

@@ -38,8 +38,8 @@ check() {
         echo 'sqlite svt test failed, no sqlite.txt was found'
         exit 1
     else
-        FIND_FILE="sqlite.txt"
-        FIND_STR="ID = 4NAME = MarkAGE = 25ADDRESS = Rich-Mond SALARY = 65000.0"
+        FIND_FILE=$RESULT
+        FIND_STR="ID = 4NAME = Mark AGE = 25ADDRESS = Rich-Mond SALARY = 65000.0"
         if [ `grep -c "$FIND_STR" $FIND_FILE` -ne '0' ];then
             echo "sqlite svt test succeed"
         else

@@ -49,7 +49,7 @@ run_sqlite() {
     init_instance
     build_sqlite
     echo -e "occlum run JVM tomcat app"
-    occlum run /usr/lib/jvm/enclave_svt/jre/bin/java -classpath ".:sqlite-jdbc-3.6.7.jar" -Xmx512m -XX:-UseCompressedOops -XX:MaxMetaspaceSize=64m -Dos.name=Linux /usr/lib/sqlite/${class_file}
+    occlum run /usr/lib/jvm/enclave_svt/jre/bin/java -classpath /usr/lib/sqlite:/usr/lib/sqlite/sqlite-jdbc-3.6.7.jar -Xmx512m -XX:MaxMetaspaceSize=64m -XX:-UseCompressedOops -Dos.name=Linux ${class_file}
 }
 
 run_sqlite
