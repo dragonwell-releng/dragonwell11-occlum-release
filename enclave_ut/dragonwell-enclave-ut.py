@@ -44,7 +44,7 @@ JTwork_path = sys.argv[1]
 Image_JTwork_path = "./image" + JTwork_path
 
 # Parse CLASSPATH, java cmd content and normal ut result
-pattern1=r"\nCLASSPATH=(.*?)\n(.*?)\/usr\/lib\/jvm\/jdk\/jre\/bin\/java (.*?[^\\])\n(.*?)(result: (Passed|Failed). Execution)"
+pattern1=r"\nCLASSPATH=(.*?)\n(.*?)\/usr\/lib\/jvm\/jdk\/jre\/bin\/java (.*?[^\\])\n(.*?)(result: (Passed|Failed|Error). Execution)"
 # Parse test path
 pattern2=r"\$root=(.*?)\/test\/"
 # Parse jtreg path
@@ -104,14 +104,14 @@ def occlum_start_asyn():
     try:
         result = subprocess.run("exec occlum start", shell=True, timeout=occlum_start_expire)
     except subprocess.TimeoutExpired:
-        print("occlum start timeout expired, so shutdown all occlum service forcely: ", result)
+        print("occlum start timeout expired, so shutdown all occlum service forcely")
         occlum_service_shutdown_forcely()
     except subprocess.CalledProcessError as e:
         e = e
-        print("occlum start subprocess.CalledProcessError, so shutdown all occlum service forcely: ", result)
+        print("occlum start subprocess.CalledProcessError, so shutdown all occlum service forcely")
         occlum_service_shutdown_forcely()
     except Exception:
-        print("occlum start exception, so shutdown all occlum service forcely: ", result)
+        print("occlum start exception, so shutdown all occlum service forcely")
         occlum_service_shutdown_forcely()
     else:
         print("occlum start normally: ", result)
@@ -120,14 +120,14 @@ def occlum_stop_asyn():
     try:
         result = subprocess.run("exec occlum stop", shell=True, timeout=occlum_stop_expire)
     except subprocess.TimeoutExpired:
-        print("occlum stop timeout expired, so shutdown all occlum service forcely: ", result)
+        print("occlum stop timeout expired, so shutdown all occlum service forcely")
         occlum_service_shutdown_forcely()
     except subprocess.CalledProcessError as e:
         e = e
-        print("occlum stop subprocess.CalledProcessError, so shutdown all occlum service forcely: ", result)
+        print("occlum stop subprocess.CalledProcessError, so shutdown all occlum service forcely")
         occlum_service_shutdown_forcely()
     except Exception:
-        print("occlum stop exception, so shutdown all occlum service forcely: ", result)
+        print("occlum stop exception, so shutdown all occlum service forcely")
         occlum_service_shutdown_forcely()
     else:
         print("occlum stop normally: ", result)
@@ -174,15 +174,12 @@ def occlum_exec_ut(args, timeout, retry_time):
             result = subprocess.run(args, shell=True, timeout=timeout, stderr=subprocess.STDOUT, stdout=fd)
             status = Status.Initial
         except subprocess.TimeoutExpired:
-            print("occlum exec result: ", result)
             status = Status.TimeoutExpired
             context = get_context(fd)
         except subprocess.CalledProcessError:
-            print("occlum exec result: ", result)
             status = Status.CalledProcessError
             context = get_context(fd)
         except Exception:
-            print("occlum exec result: ", result)
             status = Status.ExceptionError
             context = get_context(fd)
         else:
@@ -204,6 +201,7 @@ def parse_jtr_and_run_ut(jtr_path):
 
     f = open(jtr_path)
     context = f.read()
+    f.close()
 
     # get ut java file's full name
     java_ut_path = jtr_path[len(Image_JTwork_path)+len("/"):].replace(".jtr",".java")
@@ -231,21 +229,24 @@ def parse_jtr_and_run_ut(jtr_path):
     for sub_java_jtreg_run in java_jtreg_run:
         # first step, parse classpath
         tmp_classpath = sub_java_jtreg_run.group(1)
-        tmp_classpath = tmp_classpath.replace("\\", "")
-        tmp_classpath = tmp_classpath.replace("\n", "")
         # second step, parse java cmd
         tmp_javacmd = sub_java_jtreg_run.group(3)
-        tmp_javacmd = tmp_javacmd.replace("\\", "")
-        tmp_javacmd = tmp_javacmd.replace("\n", "")
         # third step, parse ut result run in normal environment
         tmp_normal_ut_result = sub_java_jtreg_run.group(6)
 
-        if tmp_javacmd == "" or not (tmp_normal_ut_result != "Passsed" and tmp_normal_ut_result != "Failed"):
+        if (tmp_javacmd is None) or (tmp_normal_ut_result != "Passed" and tmp_normal_ut_result != "Failed" and tmp_normal_ut_result != "Error"):
             record_parse_failed_ut_func(context)
             row = [java_ut_path, Status.JtrParseFailed.name, Status.JtrParseFailed.name, ""]
             normal_ut_total_count = normal_ut_total_count + 1
             dragonwell_enclave_ut_csv.write_csv(csv_path, row)
             return
+
+        tmp_classpath = tmp_classpath.replace("\\", "")
+        tmp_classpath = tmp_classpath.replace("\n", "").strip()
+
+        tmp_javacmd = tmp_javacmd.replace("\\", "")
+        tmp_javacmd = tmp_javacmd.replace("\n", "").strip()
+        tmp_javacmd = ' '.join(tmp_javacmd.split())
 
         # if a parameter was set twice, the second will be applied
         occlum_java_cmd = "/usr/lib/jvm/jdk/jre/bin/java " + occlum_java_default_parameter + " -cp " \
