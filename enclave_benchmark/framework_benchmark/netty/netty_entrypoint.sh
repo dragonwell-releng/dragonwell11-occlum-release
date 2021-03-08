@@ -53,6 +53,11 @@ if [[ $Count -gt 1 ]];then
     cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/visual-wrk/framework_benchmark.sh \
     ${DURATION} ${CONNECTIONS} "http://127.0.0.1:8080/"
+    mkdir -p ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
+    mv ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty/report/log.html \
+    ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty/report/netty.html
+    cp -rf -n ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty/report/. \
+    ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
 else
     echo 'netty svt run failed'
     exit 1

@@ -39,5 +39,12 @@ pipeline {
                          && ./enclave_benchmark/framework_benchmark/tomcat/tomcat_startup.sh"
                  }
                  }
+                 stage('FrameWork BenchMark Report') {
+                 steps {
+                     echo 'Look up FrameWork BenchMark Report by HTML publisher'
+                     sh "cp ${WORKSPACE}/workspace/${BUILD_TAG}/enclave_benchmark/framework_benchmark/report/. ${WORKSPACE}/workspace/Enclave_FWB_Report"
+                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'workspace/Enclave_FWB_Report', reportFiles: '*.html', reportName: 'FrameWork Benchmark HTML Report', reportTitles: ''])
+                 }
+                 }
          }
 }

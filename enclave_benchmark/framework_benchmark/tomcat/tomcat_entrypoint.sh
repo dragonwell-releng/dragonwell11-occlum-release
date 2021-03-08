@@ -53,6 +53,11 @@ if [[ $Count -gt 1 ]];then
     cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/tomcat
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/visual-wrk/framework_benchmark.sh \
     ${DURATION} ${CONNECTIONS} "http://127.0.0.1:8080/employee"
+    mkdir -p ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
+    mv ${WORK_SPACE}/enclave_benchmark/framework_benchmark/tomcat/report/log.html \
+    ${WORK_SPACE}/enclave_benchmark/framework_benchmark/tomcat/report/tomcat.html
+    cp -rf -n ${WORK_SPACE}/enclave_benchmark/framework_benchmark/tomcat/report/. \
+    ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
 else
     echo 'tomcat svt test failed'
     exit 1

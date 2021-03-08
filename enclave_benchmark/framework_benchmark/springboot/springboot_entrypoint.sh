@@ -53,6 +53,11 @@ if [[ $Count -gt 1 ]];then
     cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/visual-wrk/framework_benchmark.sh \
     ${DURATION} ${CONNECTIONS} "http://localhost:8080/"
+    mkdir -p ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
+    mv ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot/report/log.html \
+    ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot/report/springboot.html
+    cp -rf -n ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot/report/. \
+    ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
 else
     echo 'SpringBoot svt test failed'
     exit 1
