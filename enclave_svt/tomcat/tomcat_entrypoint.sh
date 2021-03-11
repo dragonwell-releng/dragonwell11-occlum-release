@@ -24,9 +24,14 @@ esac
 mkdir -p ${JDK_PATH}
 cp -r ./${JDK_IMAGES_DIR}/. ${JDK_PATH}
 
-echo "create and build tomcat app"
-cd ${WORK_SPACE}/enclave_svt/tomcat
-./create_and_build_tomcat_app.sh
+if [ ${FAST_MODE} == "true" ]; then
+    cd ${WORK_SPACE}/enclave_svt/tomcat
+    ./download_java_tomcat_app_jar.sh
+else
+    echo "create and build tomcat app"
+    cd ${WORK_SPACE}/enclave_svt/tomcat
+    ./create_and_build_tomcat_app.sh
+fi
 
 echo "run tomcat on occlum"
 cd ${WORK_SPACE}/enclave_svt/tomcat

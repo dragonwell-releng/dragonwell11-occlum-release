@@ -24,9 +24,14 @@ esac
 mkdir -p ${JDK_PATH}
 cp -r ./${JDK_IMAGES_DIR}/. ${JDK_PATH}
 
-echo "download and build netty app"
-cd ${WORK_SPACE}/enclave_svt/netty
-./download_and_build_netty_app.sh
+if [ ${FAST_MODE} == "true" ]; then
+    cd ${WORK_SPACE}/enclave_svt/netty
+    ./download_java_netty_app_jar.sh
+else
+    echo "download and build netty app"
+    cd ${WORK_SPACE}/enclave_svt/netty
+    ./download_and_build_netty_app.sh
+fi
 
 echo "run java on occlum"
 cd ${WORK_SPACE}/enclave_svt/netty

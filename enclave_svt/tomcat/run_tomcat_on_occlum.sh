@@ -18,11 +18,21 @@ init_instance() {
     /opt/occlum/start_aesm.sh
     cd occlum_instance
     occlum init
-    new_json="$(jq '.resource_limits.user_space_size = "1400MB" |
-                .resource_limits.kernel_space_heap_size="64MB" |
-                .resource_limits.max_num_of_threads = 64 |
-                .process.default_heap_size = "256MB" |
-                .process.default_mmap_size = "1120MB" |
+    default_mmap_size=${OCCLUM_HEAP_CONFIGURE}
+    occlum_kernel_heap_size=${OCCLUM_KERNEL_HEAP_SIZE}"MB"
+    occlum_max_thread_num=${OCCLUM_MAX_THREAD_NUM}
+    user_space_size=`expr ${default_mmap_size} + 200`
+    default_mmap_size=${default_mmap_size}"MB"
+    user_space_size=${user_space_size}"MB"
+    new_json="$(jq --arg default_mmap_size "$default_mmap_size" \
+                 --arg user_space_size "$user_space_size" \
+                 --arg occlum_kernel_heap_size "$occlum_kernel_heap_size" \
+                 --argjson occlum_max_thread_num "$occlum_max_thread_num" \
+               '.resource_limits.user_space_size = $user_space_size |
+                .resource_limits.kernel_space_heap_size = $occlum_kernel_heap_size |
+                .resource_limits.max_num_of_threads = $occlum_max_thread_num |
+                .process.default_heap_size = "150MB" |
+                .process.default_mmap_size = $default_mmap_size |
                 .entry_points = [ "/usr/lib/jvm/enclave_svt/jre/bin" ] |
                 .env.default = [ "LD_LIBRARY_PATH=/usr/lib/jvm/enclave_svt/jre/lib/server:/usr/lib/jvm/enclave_svt/jre/lib:/usr/lib/jvm/enclave_svt/jre/../lib" ]' Occlum.json)" && \
     echo "${new_json}" > Occlum.json
@@ -45,7 +55,7 @@ run_tomcat() {
     init_instance
     build_tomcat
     echo -e "occlum run JVM tomcat app"
-    occlum run /usr/lib/jvm/enclave_svt/jre/bin/java -Xmx512m -XX:-UseCompressedOops -XX:MaxMetaspaceSize=64m -Dos.name=Linux -jar /usr/lib/tomcat/${jar_file}
+    occlum run /usr/lib/jvm/enclave_svt/jre/bin/java ${OCCLUM_JAVA_PARAMETER} -jar /usr/lib/tomcat/${jar_file}
 }
 
 run_tomcat

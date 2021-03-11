@@ -24,9 +24,14 @@ esac
 mkdir -p ${JDK_PATH}
 cp -r ./${JDK_IMAGES_DIR}/. ${JDK_PATH}
 
-echo "download and build web app"
-cd ${WORK_SPACE}/enclave_svt/springboot
-./download_and_build_web_app.sh
+if [ ${FAST_MODE} == "true" ]; then
+    cd ${WORK_SPACE}/enclave_svt/springboot
+    ./download_java_springboot_app_jar.sh
+else
+    echo "download and build web app"
+    cd ${WORK_SPACE}/enclave_svt/springboot
+    ./download_and_build_web_app.sh
+fi
 
 echo "run java on occlum"
 cd ${WORK_SPACE}/enclave_svt/springboot
