@@ -5,9 +5,6 @@ BUILD_MODE=${BUILD_MODE}
 JDK_IMAGES_DIR=""
 JDK_PATH="/usr/lib/jvm/enclave_benchmark/jre"
 
-DURATION=${DURATION}
-CONNECTIONS=${CONNECTIONS}
-
 case "$BUILD_MODE" in
     release)
         JDK_IMAGES_DIR=build/linux-x86_64-normal-server-release/images/jdk
@@ -27,9 +24,14 @@ esac
 mkdir -p ${JDK_PATH}
 cp -r ./${JDK_IMAGES_DIR}/. ${JDK_PATH}
 
-echo "download and build netty app"
-cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty
-./download_and_build_netty_app.sh
+if [ ${FAST_MODE} == "true" ]; then
+    cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty
+    ./download_java_netty_app_jar.sh
+else
+    echo "download and build netty app"
+    cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty
+    ./download_and_build_netty_app.sh
+fi
 
 echo "run java on occlum"
 cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty
@@ -52,11 +54,11 @@ if [[ $Count -gt 1 ]];then
     echo $RESULT
     cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/visual-wrk/framework_benchmark.sh \
-    ${DURATION} ${CONNECTIONS} "http://127.0.0.1:8080/"
+    ${DURATION} ${CONNECTIONS} ${WRK_THREAD_NUM} "http://127.0.0.1:8080/"
     mkdir -p ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
     mv ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty/report/log.html \
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty/report/netty.html
-    cp -rf -n ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty/report/. \
+    cp -rf -a ${WORK_SPACE}/enclave_benchmark/framework_benchmark/netty/report/* \
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
 else
     echo 'netty svt run failed'

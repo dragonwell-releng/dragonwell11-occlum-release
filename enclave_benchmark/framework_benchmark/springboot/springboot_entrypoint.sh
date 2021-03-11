@@ -5,9 +5,6 @@ BUILD_MODE=${BUILD_MODE}
 JDK_IMAGES_DIR=""
 JDK_PATH="/usr/lib/jvm/enclave_benchmark/jre"
 
-DURATION=${DURATION}
-CONNECTIONS=${CONNECTIONS}
-
 case "$BUILD_MODE" in
     release)
         JDK_IMAGES_DIR=build/linux-x86_64-normal-server-release/images/jdk
@@ -27,15 +24,21 @@ esac
 mkdir -p ${JDK_PATH}
 cp -r ./${JDK_IMAGES_DIR}/. ${JDK_PATH}
 
-echo "download and build web app"
-cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot
-./download_and_build_web_app.sh
+if [ ${FAST_MODE} == "true" ]; then
+    cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot
+    ./download_java_springboot_app_jar.sh
+else
+    echo "download and build web app"
+    cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot
+    ./download_and_build_web_app.sh
+fi
+
 
 echo "run java on occlum"
 cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot
 ./run_java_on_occlum.sh &
 
-echo "waiting for springboot start up for five minitutes......"
+echo "waiting for springboot start up for 2.5 minitutes......"
 sleep 150
 
 RESULT=""
@@ -52,11 +55,11 @@ if [[ $Count -gt 1 ]];then
     echo $RESULT
     cd ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/visual-wrk/framework_benchmark.sh \
-    ${DURATION} ${CONNECTIONS} "http://localhost:8080/"
+    ${DURATION} ${CONNECTIONS} ${WRK_THREAD_NUM} "http://localhost:8080/"
     mkdir -p ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
     mv ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot/report/log.html \
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot/report/springboot.html
-    cp -rf -n ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot/report/. \
+    cp -rf -a ${WORK_SPACE}/enclave_benchmark/framework_benchmark/springboot/report/* \
     ${WORK_SPACE}/enclave_benchmark/framework_benchmark/report
 else
     echo 'SpringBoot svt test failed'

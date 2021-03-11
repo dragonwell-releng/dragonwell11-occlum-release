@@ -37,7 +37,7 @@ echo "run java on occlum"
 cd ${WORK_SPACE}/enclave_svt/springboot
 ./run_java_on_occlum.sh &
 
-echo "waiting for springboot start up for five minitutes......"
+echo "waiting for springboot start up for 2.5 minitutes......"
 sleep 150
 
 RESULT=""
