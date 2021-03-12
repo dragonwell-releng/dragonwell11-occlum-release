@@ -43,6 +43,7 @@ pipeline {
                  steps {
                      echo 'Look up FrameWork BenchMark Report by HTML publisher'
                      sh "cp -rf -a ${WORKSPACE}/workspace/${BUILD_TAG}/enclave_benchmark/framework_benchmark/report/* ${WORKSPACE}/workspace/Enclave_FWB_Report"
+                     sh "rm ${WORKSPACE}/workspace/Enclave_FWB_Report/template.html"
                      publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'workspace/Enclave_FWB_Report', reportFiles: '*.html', reportName: 'FrameWork Benchmark HTML Report', reportTitles: ''])
                  }
                  }

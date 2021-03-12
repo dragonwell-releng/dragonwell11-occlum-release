@@ -1,6 +1,8 @@
 #!/bin/bash
 
-apk --no-cache add wget
+if [ ${LIBC} == "musl" ]; then
+    apk --no-cache add wget
+fi
 
 WORK_SPACE=`pwd`
 BUILD_MODE=${BUILD_MODE}

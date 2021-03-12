@@ -7,6 +7,9 @@ if [ $ARGNUM != 1 ]; then
 fi
 
 DOCKER_IMAGE=registry.cn-hangzhou.aliyuncs.com/dragonwell/dragonwell11-build-musl:v1
+if [ ${libc} == "glibc" ]; then
+    DOCKER_IMAGE=occlum/occlum:0.19.1-ubuntu18.04
+fi
 SCRIPT_NAME=dragonwell-ut-entrypoint.sh
 
 BUILD_MODE=$1
@@ -34,5 +37,5 @@ esac
 
 docker run -i --rm -e BUILD_MODE=$BUILD_MODE -e JTREG_DOWNLOAD=$JTREG_DOWNLOAD \
        -e JTREG_PATH=$JTREG_PATH -e TEST_PATH=$TEST_PATH -e JDK_PATH=$JDK_PATH \
-       -e TEST_SET="$TEST_SET" -v `pwd`:`pwd` -w `pwd` --entrypoint=bash \
+       -e LIBC=${libc} -e TEST_SET="$TEST_SET" -v `pwd`:`pwd` -w `pwd` --entrypoint=bash \
        $DOCKER_IMAGE `pwd`/enclave_ut/$SCRIPT_NAME
