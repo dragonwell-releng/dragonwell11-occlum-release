@@ -43,6 +43,10 @@ build_web() {
     mkdir -p image/usr/lib/jvm
     cp -r /usr/lib/jvm/enclave_svt image/usr/lib/jvm
     cp /usr/local/occlum/x86_64-linux-musl/lib/libz.so.1 image/lib
+    cp /lib/x86_64-linux-gnu/libz.so.1.* image/opt/occlum/glibc/lib
+    mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
+    cp /lib/x86_64-linux-gnu/libdl-*.so image/opt/occlum/glibc/lib
+    mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
     mkdir -p image/usr/lib/spring
     cp ../${jar_path} image/usr/lib/spring/
     occlum build

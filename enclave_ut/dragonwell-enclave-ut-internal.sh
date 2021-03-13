@@ -30,6 +30,10 @@ init_instance() {
 
 build_dragonwell_ut() {
     cp /usr/local/occlum/x86_64-linux-musl/lib/libz.so.1 image/lib
+    cp /lib/x86_64-linux-gnu/libz.so.1.* image/opt/occlum/glibc/lib
+    mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
+    cp /lib/x86_64-linux-gnu/libdl-*.so image/opt/occlum/glibc/lib
+    mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
 
     # Copy JVM and JAR file into Occlum instance and build
     mkdir -p image/usr/lib/jvm

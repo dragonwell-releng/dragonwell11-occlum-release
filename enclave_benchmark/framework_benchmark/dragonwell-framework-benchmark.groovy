@@ -15,7 +15,7 @@ pipeline {
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && \
                          mkdir tmp && git clone git@github.com:dragonwell-releng/dragonwell11-occlum-release.git ./tmp && \
                          mv ./tmp/* ./ && rm -rf tmp"
-                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./make_alpine.sh ${build_mode}"
+                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} && ./create_jdk_build.sh"
                  }
                  }
                  stage('SpringBoot') {
