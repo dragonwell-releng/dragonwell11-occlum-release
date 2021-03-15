@@ -10,8 +10,14 @@ FAST_MODE=${fast_mode}
 DURATION=${duration}
 CONNECTIONS=${connections}
 WRK_THREAD_NUM=${wrk_thread_num}
+SGX_MODE=${sgx_mode}
 
-docker run -i --device /dev/isgx --network host --rm -v `pwd`:`pwd` -w `pwd` \
+sgx_parameter=/dev/isgx
+if SGX_MODE == "sgx2"; then
+    sgx_parameter=/dev/sgx
+fi
+
+docker run -i --device ${sgx_parameter} --network host --rm -v `pwd`:`pwd` -w `pwd` \
            -e BUILD_MODE=${BUILD_MODE} \
            -e DURATION=${DURATION} \
            -e CONNECTIONS=${CONNECTIONS} \

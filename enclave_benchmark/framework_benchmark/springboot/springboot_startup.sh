@@ -10,8 +10,14 @@ OCCLUM_HEAP_CONFIGURE=${occlum_heap_configure}
 OCCLUM_KERNEL_HEAP_SIZE=${occlum_kernel_heap_size}
 OCCLUM_MAX_THREAD_NUM=${occlum_max_thread_num}
 FAST_MODE=${fast_mode}
+SGX_MODE=${sgx_mode}
 
-docker run -i --device /dev/isgx --network host --rm -v `pwd`:`pwd` -w `pwd` \
+sgx_parameter=/dev/isgx
+if SGX_MODE == "sgx2"; then
+    sgx_parameter=/dev/sgx
+fi
+
+docker run -i --device ${sgx_parameter} --network host --rm -v `pwd`:`pwd` -w `pwd` \
            -e BUILD_MODE=${BUILD_MODE} \
            -e DURATION=${DURATION} \
            -e CONNECTIONS=${CONNECTIONS} \
