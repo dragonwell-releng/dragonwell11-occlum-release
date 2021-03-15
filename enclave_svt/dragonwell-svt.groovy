@@ -25,13 +25,6 @@ pipeline {
                          && ./enclave_svt/springboot/springboot_startup.sh"
                  }
                  }
-                 stage('Font Support') {
-                 steps {
-                     echo 'create font app and run it based on Occlum'
-                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
-                         && ./enclave_svt/font/font_startup.sh"
-                 }
-                 }
                  stage('Netty') {
                  steps {
                      echo 'create netty app and run it based on Occlum'
@@ -51,6 +44,13 @@ pipeline {
                      echo 'create SQlite app and run it based on Occlum'
                      sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
                          && ./enclave_svt/sqlite/sqlite_startup.sh"
+                 }
+                 }
+                 stage('Font Support') {
+                 steps {
+                     echo 'create font app and run it based on Occlum'
+                     sh "cd ${WORKSPACE}/workspace/${BUILD_TAG} \
+                         && ./enclave_svt/font/font_startup.sh"
                  }
                  }
          }
