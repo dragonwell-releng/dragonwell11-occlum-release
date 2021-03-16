@@ -67,14 +67,17 @@ build_poi_font() {
     if [[ "$result" != "" ]]; then
         cp /usr/lib64/libz.so.1.* image/opt/occlum/glibc/lib
         mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
-        cp /usr/lib64/libdl-*.so image/opt/occlum/glibc/lib
-        mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
+        cp /opt/occlum/glibc/lib/libdl.so.2 image/opt/occlum/glibc/lib
+        cp /opt/occlum/glibc/lib/librt.so.1 image/opt/occlum/glibc/lib
+        cp /opt/occlum/glibc/lib/libm.so.6 image/opt/occlum/glibc/lib
+        cp /opt/occlum/glibc/lib/libnss_files.so.2 image/opt/occlum/glibc/lib
     else
         cp /lib/x86_64-linux-gnu/libz.so.1.* image/opt/occlum/glibc/lib
         mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
         cp /lib/x86_64-linux-gnu/libdl-*.so image/opt/occlum/glibc/lib
         mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
     fi
+
     cp -r /opt/occlum/font-lib/etc image && cp -r /opt/occlum/font-lib/lib/. image/lib && cp -r /opt/occlum/font-lib/usr/. image/usr
     mkdir -p image/usr/app
     cp ../${jar_path} image/usr/app
