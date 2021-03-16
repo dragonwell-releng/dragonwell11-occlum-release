@@ -15,4 +15,5 @@ docker run -i --device /dev/isgx --network host --rm -v `pwd`:`pwd` -w `pwd` \
            -e OCCLUM_KERNEL_HEAP_SIZE=${OCCLUM_KERNEL_HEAP_SIZE} \
            -e OCCLUM_MAX_THREAD_NUM=${OCCLUM_MAX_THREAD_NUM} \
            -e FAST_MODE=${FAST_MODE} \
+           -e OCCLUM_IMAGE=${OCCLUM_IMAGE} \
            ${OCCLUM_IMAGE} `pwd`/enclave_svt/tomcat/tomcat_entrypoint.sh

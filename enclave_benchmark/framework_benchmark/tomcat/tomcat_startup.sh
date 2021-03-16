@@ -13,7 +13,7 @@ FAST_MODE=${fast_mode}
 SGX_MODE=${sgx_mode}
 
 sgx_parameter=/dev/isgx
-if SGX_MODE == "sgx2"; then
+if [ ${SGX_MODE} == "sgx2" ]; then
     sgx_parameter=/dev/sgx
 fi
 
@@ -27,4 +27,5 @@ docker run -i --device ${sgx_parameter} --network host --rm -v `pwd`:`pwd` -w `p
            -e OCCLUM_KERNEL_HEAP_SIZE=${OCCLUM_KERNEL_HEAP_SIZE} \
            -e OCCLUM_MAX_THREAD_NUM=${OCCLUM_MAX_THREAD_NUM} \
            -e FAST_MODE=${FAST_MODE} \
+           -e OCCLUM_IMAGE=${OCCLUM_IMAGE} \
            ${OCCLUM_IMAGE} `pwd`/enclave_benchmark/framework_benchmark/tomcat/tomcat_entrypoint.sh

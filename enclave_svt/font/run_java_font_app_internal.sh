@@ -61,10 +61,20 @@ build_poi_font() {
     mkdir -p image/usr/lib/jvm
     cp -r /usr/lib/jvm/enclave_svt image/usr/lib/jvm
     cp /usr/local/occlum/x86_64-linux-musl/lib/libz.so.1 image/lib
-    cp /lib/x86_64-linux-gnu/libz.so.1.* image/opt/occlum/glibc/lib
-    mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
-    cp /lib/x86_64-linux-gnu/libdl-*.so image/opt/occlum/glibc/lib
-    mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
+    os_name="centos"
+    result=$(echo ${OCCLUM_IMAGE} | grep "${os_name}")
+    # centos
+    if [[ "$result" != "" ]]; then
+        cp /usr/lib64/libz.so.1.* image/opt/occlum/glibc/lib
+        mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
+        cp /usr/lib64/libdl-*.so image/opt/occlum/glibc/lib
+        mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
+    else
+        cp /lib/x86_64-linux-gnu/libz.so.1.* image/opt/occlum/glibc/lib
+        mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
+        cp /lib/x86_64-linux-gnu/libdl-*.so image/opt/occlum/glibc/lib
+        mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
+    fi
     cp -r /opt/occlum/font-lib/etc image && cp -r /opt/occlum/font-lib/lib/. image/lib && cp -r /opt/occlum/font-lib/usr/. image/usr
     mkdir -p image/usr/app
     cp ../${jar_path} image/usr/app

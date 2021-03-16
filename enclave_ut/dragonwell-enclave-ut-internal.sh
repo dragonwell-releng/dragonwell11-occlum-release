@@ -30,10 +30,20 @@ init_instance() {
 
 build_dragonwell_ut() {
     cp /usr/local/occlum/x86_64-linux-musl/lib/libz.so.1 image/lib
-    cp /lib/x86_64-linux-gnu/libz.so.1.* image/opt/occlum/glibc/lib
-    mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
-    cp /lib/x86_64-linux-gnu/libdl-*.so image/opt/occlum/glibc/lib
-    mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
+    # centos
+    if [[ "$result" != "" ]]; then
+        cp /usr/lib64/libz.so.1.* image/opt/occlum/glibc/lib
+        mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
+        cp /opt/occlum/glibc/lib/libdl.so.2 image/opt/occlum/glibc/lib
+        cp /opt/occlum/glibc/lib/librt.so.1 image/opt/occlum/glibc/lib
+        cp /opt/occlum/glibc/lib/libm.so.6 image/opt/occlum/glibc/lib
+        cp /opt/occlum/glibc/lib/libnss_files.so.2 image/opt/occlum/glibc/lib
+    else
+        cp /lib/x86_64-linux-gnu/libz.so.1.* image/opt/occlum/glibc/lib
+        mv image/opt/occlum/glibc/lib/libz.so.1.* image/opt/occlum/glibc/lib/libz.so.1
+        cp /lib/x86_64-linux-gnu/libdl-*.so image/opt/occlum/glibc/lib
+        mv image/opt/occlum/glibc/lib/libdl-*.so image/opt/occlum/glibc/lib/libdl.so.2
+    fi
 
     # Copy JVM and JAR file into Occlum instance and build
     mkdir -p image/usr/lib/jvm
@@ -55,9 +65,20 @@ run_dragonwell_ut() {
     $SHAREPATH/dragonwell-enclave-ut.py /usr/jvm/test/JTwork
 }
 
-# install xlrd and xlwt for python3
-apt-get update
-apt-get -y install python3-pip
+os_name="centos"
+result=$(echo ${OCCLUM_IMAGE} | grep "${os_name}")
+# install pip3 for python3
+if [[ "$result" != "" ]]; then
+    # centos
+    curl https://raw.githubusercontent.com/dvershinin/apt-get-centos/master/apt-get.sh -o /usr/local/bin/apt-get
+    chmod 0755 /usr/local/bin/apt-get
+    /usr/local/bin/apt-get -y install python3-pip
+else
+    # ubuntu
+    apt-get update
+    apt-get -y install python3-pip
+fi
+
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pandas
 # run dragonwell ut
 run_dragonwell_ut

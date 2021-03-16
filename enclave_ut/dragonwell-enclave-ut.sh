@@ -16,4 +16,5 @@ docker run -i --device /dev/isgx --network host --rm -v `pwd`:`pwd` -w `pwd`/enc
            -e OCCLUM_HEAP_CONFIGURE=${OCCLUM_HEAP_CONFIGURE} \
            -e OCCLUM_KERNEL_HEAP_SIZE=${OCCLUM_KERNEL_HEAP_SIZE} \
            -e OCCLUM_MAX_THREAD_NUM=${OCCLUM_MAX_THREAD_NUM} \
+           -e OCCLUM_IMAGE=${OCCLUM_IMAGE} \
            ${OCCLUM_IMAGE} `pwd`/enclave_ut/dragonwell-enclave-ut-internal.sh
