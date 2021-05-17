@@ -12,12 +12,12 @@ CONNECTIONS=${connections}
 WRK_THREAD_NUM=${wrk_thread_num}
 SGX_MODE=${sgx_mode}
 
-sgx_parameter=/dev/isgx
+sgx_parameter="--device /dev/isgx"
 if [ ${SGX_MODE} == "sgx2" ]; then
-    sgx_parameter=/dev/sgx
+    sgx_parameter="--privileged -v /dev/sgx_enclave:/dev/sgx/enclave -v /dev/sgx_provision:/dev/sgx/provision -v /var/run/aesmd:/var/run/aesmd"
 fi
 
-docker run -i --device ${sgx_parameter} --network host --rm -v `pwd`:`pwd` -w `pwd` \
+docker run -i ${sgx_parameter} --network host --rm -v `pwd`:`pwd` -w `pwd` \
            -e BUILD_MODE=${BUILD_MODE} \
            -e DURATION=${DURATION} \
            -e CONNECTIONS=${CONNECTIONS} \
