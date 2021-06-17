@@ -7,10 +7,10 @@ init_instance() {
     rm -rf occlum_instance && mkdir occlum_instance
     cd occlum_instance
     occlum init
-    default_mmap_size=${OCCLUM_HEAP_CONFIGURE}
+    default_mmap_size=${PROCESS_MMAP_SIZE}
     occlum_kernel_heap_size=${OCCLUM_KERNEL_HEAP_SIZE}"MB"
     occlum_max_thread_num=${OCCLUM_MAX_THREAD_NUM}
-    user_space_size=`expr ${default_mmap_size} + 200`
+    user_space_size=${OCCLUM_USER_SPACE}
     default_mmap_size=${default_mmap_size}"MB"
     user_space_size=${user_space_size}"MB"
     new_json="$(jq --arg default_mmap_size "$default_mmap_size" \
