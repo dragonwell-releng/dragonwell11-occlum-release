@@ -9,7 +9,17 @@ fi
 BUILD_MODE=$1
 BUILD_NUMBER=""
 # DOCKER_IMAGE=registry.cn-hangzhou.aliyuncs.com/dragonwell/dragonwell11-build-musl:v1
-DOCKER_IMAGE=adoptopenjdk/alpine3_build_image:latest
+# DOCKER_IMAGE=adoptopenjdk/alpine3_build_image:latest
+IMAGE_EXIST=`docker images | grep 57de0a70e364`
+if [ IMAGE_EXIST == "" ]; then
+    DOCKER_IMAGE=https://dragonwell.oss-cn-shanghai.aliyuncs.com/11/linux/x64/11.0.8.3-enclave/dragonwell11-alpine-build.tar
+    mkdir -p docker_image && cd $_
+    wget -c $DOCKER_IMAGE
+    docker load < dragonwell11-alpine-build.tar
+    cd ..
+fi
+
+DOCKER_IMAGE=57de0a70e364
 SCRIPT_NAME=build_alpine_entrypoint.sh
 
 case "${BUILD_MODE}" in
@@ -43,3 +53,5 @@ if [ $? -eq 0 ]; then
                     $DOCKER_IMAGE `pwd`/$SCRIPT_NAME
     exit $?
 fi
+
+rm -rf docker_image
